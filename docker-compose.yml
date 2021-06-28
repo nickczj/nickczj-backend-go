@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  web1:
+    restart: always
+    image: web1
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 8888:8888
+    environment: 
+      - VIRTUAL_HOST=api.nickczj.com
+      - LETSENCRYPT_HOST=api.nickczj.com
