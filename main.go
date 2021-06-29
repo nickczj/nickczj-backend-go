@@ -9,8 +9,8 @@ import (
 func main() {
 	router := gin.Default()
 
-	router.GET("/personal/netWorth", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"netWorth": 170000})
+	router.GET("/hello", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"hi": "there"})
 	})
 
 	router.Run(":8888")
