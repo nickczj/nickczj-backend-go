@@ -1,17 +1,15 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 )
 
-func main() {
-	router := gin.Default()
+var router *gin.Engine
 
-	router.GET("/hello", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"hi": "there"})
-	})
+func main() {
+	router = gin.Default()
+
+	initializeRoutes()
 
 	router.Run(":8888")
 }
