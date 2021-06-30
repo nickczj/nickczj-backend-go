@@ -23,8 +23,8 @@ services:
     volumes_from:
       - "nginx-proxy"
 
-  api:
-    container_name: api
+  web1:
+    container_name: web1
     restart: always
     ports:
       - "8888:8888"
@@ -33,7 +33,6 @@ services:
       context: .
     mem_limit: 256m
     mem_reservation: 50m
-    cpus: 0.5
     environment:
       - VIRTUAL_HOST=api.nickczj.com
       - LETSENCRYPT_HOST=api.nickczj.com

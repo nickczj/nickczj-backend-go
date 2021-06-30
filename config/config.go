@@ -10,7 +10,8 @@ import (
 
 func SetEnvironment() {
 	viper.AddConfigPath("./config")
-	viper.SetConfigType("yaml")
+	viper.AddConfigPath(".")
+	viper.SetConfigType("yml")
 	viper.AutomaticEnv()
 
 	var env string
