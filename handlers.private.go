@@ -6,7 +6,7 @@ import (
 )
 
 func getNetWorth(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"netWorth": calculateNetWorth})
+	c.JSON(http.StatusOK, gin.H{"netWorth": calculateNetWorth()})
 }
 
 func calculateNetWorth() float64 {
