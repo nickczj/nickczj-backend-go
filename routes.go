@@ -7,14 +7,14 @@ import (
 )
 
 func initializeRoutes() {
-	router.GET("/hello", func(c *gin.Context) {
+	app.GET("/hello", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"hi": "there"})
 	})
 
-	router.Use(stats.RequestStats())
-	router.GET("/stats", getStats)
+	app.Use(stats.RequestStats())
+	app.GET("/stats", getStats)
 
-	privateRoutes := router.Group("/p/v1")
+	privateRoutes := app.Group("/p/v1")
 	{
 		privateRoutes.GET("/nw", getNetWorth)
 	}

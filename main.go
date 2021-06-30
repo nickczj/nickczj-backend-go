@@ -2,14 +2,22 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nickczj/web1/config"
+	log "github.com/sirupsen/logrus"
 )
 
-var router *gin.Engine
+var app *gin.Engine
 
 func main() {
-	router = gin.Default()
+	config.SetEnvironment()
+
+	if !gin.IsDebugging() {
+		log.SetLevel(log.InfoLevel)
+	}
+
+	app = gin.Default()
 
 	initializeRoutes()
 
-	router.Run(":8888")
+	app.Run(":8888")
 }
