@@ -10,5 +10,5 @@ FROM alpine:3.14
 RUN apk --no-cache add ca-certificates
 COPY --from=builder /go/bin/app /app
 ENTRYPOINT /app
-LABEL Name=web1 Version=0.0.1
+LABEL Name=api Version=0.0.1
 EXPOSE 8888
