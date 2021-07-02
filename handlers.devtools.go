@@ -6,6 +6,6 @@ import (
 	"net/http"
 )
 
-func getStats(c * gin.Context) {
+func getStats(c *gin.Context) {
 	c.JSON(http.StatusOK, stats.Report())
 }

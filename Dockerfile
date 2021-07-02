@@ -6,7 +6,7 @@ RUN go build -o /go/bin/app
 
 #final stage
 FROM alpine:3.14
-RUN apk --no-cache add ca-certificates
+RUN apk --no-cache add ca-certificates tzdata
 COPY --from=builder /go/bin/app /app
 COPY --from=builder /go/src/app/config /config/
 ENTRYPOINT /app
