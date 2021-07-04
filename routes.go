@@ -11,11 +11,13 @@ func initializeRoutes() {
 		c.JSON(http.StatusOK, gin.H{"hi": "there"})
 	})
 
-	app.Use(stats.RequestStats())
-	app.GET("/stats", getStats)
-
+	// Finances
 	privateRoutes := app.Group("/p/v1")
 	{
 		privateRoutes.GET("/nw", getNetWorth)
 	}
+
+	// Metrics
+	app.Use(stats.RequestStats())
+	app.GET("/stats", getStats)
 }

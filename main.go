@@ -16,6 +16,7 @@ func main() {
 	}
 
 	app = gin.Default()
+	app.Use(config.Cors())
 
 	initializeRoutes()
 
