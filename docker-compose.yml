@@ -33,7 +33,10 @@ services:
       - TZ=Asia/Singapore
 
   web1:
-    container_name: web1
+    container_name: "${APP_NAME}"
+    depends_on:
+      mariadb:
+        condition: service_healthy
     restart: always
     ports:
       - "8888:8888"
@@ -46,5 +49,29 @@ services:
     environment:
       - VIRTUAL_HOST=api.nickczj.com
       - LETSENCRYPT_HOST=api.nickczj.com
-      - APP_ENV=prod
+      - APP_ENV=local
       - TZ=Asia/Singapore
+
+  mariadb:
+    container_name: "${APP_NAME}-mariadb"
+    image: "mariadb:${MARIADB_VERSION}"
+    restart: always
+    ports:
+      - "3306:3306"
+    volumes:
+      - "mariadb_data:/var/lib/mysql/data"
+      - "mariadb_logs:/var/lib/mysql/logs"
+      - /var/docker/mariadb/conf:/etc/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "--user=${MYSQL_USER}", "--password=${MYSQL_PASSWORD}"]
+      interval: 3s
+      retries: 10
+
+volumes:
+  mariadb_data:
+  mariadb_logs:

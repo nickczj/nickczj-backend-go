@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/nickczj/web1/config"
+	"github.com/nickczj/web1/database"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -18,6 +19,7 @@ func main() {
 	app = gin.Default()
 	app.Use(config.Cors())
 
+	database.Init()
 	initializeRoutes()
 
 	app.Run(":8888")
