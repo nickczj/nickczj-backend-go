@@ -7,17 +7,18 @@ import (
 )
 
 func initializeRoutes() {
-	app.GET("/hello", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"hi": "there"})
-	})
+	// Metrics
+	app.Use(stats.RequestStats())
+	app.GET("/stats", getStats)
 
 	// Finances
 	privateRoutes := app.Group("/p/v1")
 	{
-		privateRoutes.GET("/nw", getNetWorth)
+		privateRoutes.GET("/nw/:id", GetNetWorth)
+		privateRoutes.POST("/nw", SaveNetWorth)
 	}
 
-	// Metrics
-	app.Use(stats.RequestStats())
-	app.GET("/stats", getStats)
+	app.GET("/hello", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"hi": "there"})
+	})
 }

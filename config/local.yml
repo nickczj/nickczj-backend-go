@@ -1,0 +1,5 @@
+db:
+  host: ${APP_NAME}-mariadb
+  user: ${MYSQL_USER}
+  pass: ${MYSQL_PASSWORD}
+  name: ${MYSQL_DATABASE}

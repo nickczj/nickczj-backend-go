@@ -34,6 +34,11 @@ func SetEnvironment() {
 	}
 }
 
+func DSN() string {
+	config := "charset=utf8mb4&parseTime=True&loc=Local"
+	return viper.GetString("db.user") + ":" + viper.GetString("db.pass") + "@tcp(" + viper.GetString("db.host") + ")/" + viper.GetString("db.name") + "?" + config
+}
+
 func Cors() gin.HandlerFunc {
 	if !gin.IsDebugging() {
 		config := cors.DefaultConfig()
