@@ -71,6 +71,9 @@ services:
       test: ["CMD", "mysqladmin" ,"ping", "--user=${MYSQL_USER}", "--password=${MYSQL_PASSWORD}"]
       interval: 3s
       retries: 10
+    mem_limit: 128m
+    mem_reservation: 25m
+    cpus: 0.2
 
 volumes:
   mariadb_data:
