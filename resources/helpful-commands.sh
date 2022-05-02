@@ -9,3 +9,5 @@ docker exec nick_nginx-proxy_1 cat /etc/nginx/conf.d/default.conf
 # ARCHIVE
 docker exec hosting_plausible_db_1 psql -U postgres -d plausible_db -c "show tables;"
 docker run -it --net hosting_default --rm --link plausible_events_db_1:clickhouse-server yandex/clickhouse-client --host plausible_plausible_events_db_1  --query "CREATE DATABASE IF NOT EXISTS plausible_events_db"
+
+# https://doc.traefik.io/traefik/user-guides/docker-compose/basic-example/

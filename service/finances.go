@@ -1,13 +1,23 @@
 package service
 
 import (
+	"github.com/nickczj/web1/cache"
 	"github.com/nickczj/web1/database"
 	"github.com/nickczj/web1/model"
+	"github.com/nickczj/web1/utils"
+	"strconv"
 )
 
 func GetNetWorth(id int) (finances model.Finances, err error) {
+	key := cache.GenerateKey([]string{utils.GetMethodName(), strconv.Itoa(id)}...)
+	return cache.GetElse[model.Finances](key, func() (model.Finances, error) {
+		return getNetWorth(id)
+	})
+}
+
+func getNetWorth(id int) (finances model.Finances, err error) {
 	err = database.DB.First(&finances, id).Error
-	return
+	return finances, err
 }
 
 func SaveNetWorth(f model.Finances) (model.Finances, error) {
