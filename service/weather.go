@@ -17,49 +17,35 @@ type Weather struct {
 func Now() (*Weather, error) {
 	global.Client = resty.New()
 
-	psi := make(chan any)
-	uv := make(chan any)
+	weather := &Weather{}
 
 	ctx, _ := context.WithCancel(context.Background())
 	g, _ := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
-		defer close(psi)
 		resp, err := datagovget("/environment/psi")
 		if err != nil {
 			return err
 		}
-		select {
-		case <-ctx.Done():
-			return ctx.Err()
-		case psi <- resp:
-		}
+		weather.UV = resp
 		return nil
 	})
 
 	g.Go(func() error {
-		defer close(uv)
 		resp, err := datagovget("/environment/uv-index")
 		if err != nil {
 			return err
 		}
-		log.Info("hmm ")
-		select {
-		case <-ctx.Done():
-			return ctx.Err()
-		case uv <- resp:
-		}
+		weather.PSI = resp
 		return nil
 	})
-
-	a, b := <-psi, <-uv
 
 	err := g.Wait()
 	if err != nil {
 		return nil, err
 	}
 
-	return &Weather{a, b}, nil
+	return weather, nil
 }
 
 func datagovget(api string) (any, error) {
@@ -76,7 +62,7 @@ func datagovget(api string) (any, error) {
 		EnableTrace().
 		Get(url)
 
-	log.Info(resp.Request.TraceInfo())
+	log.Info("Resp time: ", resp.Request.TraceInfo().TotalTime)
 
 	if err != nil {
 		return "", err
