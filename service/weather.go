@@ -1,11 +1,13 @@
 package service
 
 import (
+	"bytes"
 	"context"
 	"github.com/go-resty/resty/v2"
 	"github.com/nickczj/web1/global"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
+	"runtime/debug"
 	"time"
 )
 
@@ -16,36 +18,50 @@ type Weather struct {
 
 func Now() (*Weather, error) {
 	global.Client = resty.New()
+	global.Client.SetTimeout(time.Second / 10)
 
-	weather := &Weather{}
+	uv := make(chan any)
+	psi := make(chan any)
 
 	ctx, _ := context.WithCancel(context.Background())
 	g, _ := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
+		defer close(psi)
 		resp, err := datagovget("/environment/psi")
 		if err != nil {
 			return err
 		}
-		weather.UV = resp
+
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case psi <- resp:
+		}
+		log.Info("Lambda goroutine: ", string(bytes.Fields(debug.Stack())[1]))
+
 		return nil
 	})
 
 	g.Go(func() error {
+		defer close(uv)
 		resp, err := datagovget("/environment/uv-index")
 		if err != nil {
 			return err
 		}
-		weather.PSI = resp
+
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case uv <- resp:
+		}
+		log.Info("Lambda goroutine: ", string(bytes.Fields(debug.Stack())[1]))
 		return nil
 	})
 
-	err := g.Wait()
-	if err != nil {
-		return nil, err
-	}
+	log.Info("Now goroutine: ", string(bytes.Fields(debug.Stack())[1]))
 
-	return weather, nil
+	return &Weather{<-psi, <-uv}, g.Wait()
 }
 
 func datagovget(api string) (any, error) {
