@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"github.com/gin-gonic/gin"
 	"github.com/nickczj/web1/model"
 	"github.com/nickczj/web1/service"
+	log "github.com/sirupsen/logrus"
 	"net/http"
+	"runtime/debug"
 	"strconv"
 )
 
@@ -29,8 +32,9 @@ func SaveNetWorth(c *gin.Context) {
 }
 
 func GetWeatherNow(c *gin.Context) {
+	log.Info("GetWeatherNow goroutine: ", string(bytes.Fields(debug.Stack())[1]))
 	if weather, err := service.Now(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to retrieve weather"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to retrieve weather || " + err.Error()})
 	} else {
 		c.JSON(http.StatusOK, gin.H{"weather": weather})
 	}
