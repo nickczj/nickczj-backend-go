@@ -12,10 +12,22 @@ func initializeRoutes() {
 	app.GET("/stats", getStats)
 
 	// Finances
-	privateRoutes := app.Group("/p/v1")
+	finances := app.Group("/p/v1")
 	{
-		privateRoutes.GET("/nw/:id", GetNetWorth)
-		privateRoutes.POST("/nw", SaveNetWorth)
+		finances.GET("/nw/:id", GetNetWorth)
+		finances.POST("/nw", SaveNetWorth)
+	}
+
+	// Weather
+	weather := app.Group("/weather")
+	{
+		weather.GET("/now", GetWeatherNow)
+	}
+
+	// Invisalign
+	invisalign := app.Group("/invisalign")
+	{
+		invisalign.GET("/current-tray", GetCurrentTray)
 	}
 
 	app.GET("/hello", func(c *gin.Context) {
