@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-redis/cache/v8"
 	"github.com/go-redis/redis/v8"
+	"github.com/nickczj/web1/config"
 	"github.com/nickczj/web1/global"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -11,9 +12,15 @@ import (
 )
 
 func Init() {
+	password, err := config.AccessSecretVersion("projects/171134391294/secrets/redis_password")
+	if err != nil {
+		log.Error("Error initializing redis server ", err)
+		return
+	}
+
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     viper.GetString("redis.host"),
-		Password: viper.GetString("redis.password"),
+		Password: *password,
 		DB:       0, // use default DB
 	})
 
@@ -31,6 +38,10 @@ func Init() {
 }
 
 func GetElse[T any](key string, f func() (T, error)) (T, error) {
+	if global.Cache == nil {
+		return f()
+	}
+
 	result := new(T)
 
 	err := global.Cache.Once(&cache.Item{

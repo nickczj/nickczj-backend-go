@@ -1,0 +1,2 @@
+redis:
+  host: redis-19440.c295.ap-southeast-1-1.ec2.cloud.redislabs.com:19440
