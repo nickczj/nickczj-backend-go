@@ -10,8 +10,8 @@ import (
 )
 
 type Weather struct {
-	PSI any
-	UV  any
+	PSI interface{}
+	UV  interface{}
 }
 
 func Now() (*Weather, error) {
@@ -48,11 +48,11 @@ func Now() (*Weather, error) {
 	return weather, nil
 }
 
-func datagovget(api string) (any, error) {
+func datagovget(api string) (interface{}, error) {
 	now := time.Now().Format("2006-01-02T15:04:05")
 	url := "https://api.data.gov.sg/v1" + api
 
-	result := new(any)
+	result := new(interface{})
 
 	resp, err := global.Client.R().
 		SetResult(result).

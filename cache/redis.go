@@ -6,15 +6,16 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/nickczj/web1/config"
 	"github.com/nickczj/web1/global"
+	"github.com/nickczj/web1/model"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"strings"
 )
 
 func Init() {
-	password, err := config.AccessSecretVersion("projects/171134391294/secrets/redis_password")
+	password, err := config.AccessSecretVersion("projects/171134391294/secrets/redis_password/versions/latest")
 	if err != nil {
-		log.Error("Error initializing redis server ", err)
+		log.Error("Error getting GCP secret ", err)
 		return
 	}
 
@@ -37,12 +38,12 @@ func Init() {
 	}
 }
 
-func GetElse[T any](key string, f func() (T, error)) (T, error) {
+func GetElse(key string, f func() (model.Finances, error)) (model.Finances, error) {
 	if global.Cache == nil {
 		return f()
 	}
 
-	result := new(T)
+	result := new(model.Finances)
 
 	err := global.Cache.Once(&cache.Item{
 		Key:   key,

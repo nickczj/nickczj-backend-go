@@ -10,7 +10,7 @@ import (
 
 func GetNetWorth(id int) (finances model.Finances, err error) {
 	key := cache.GenerateKey([]string{utils.GetMethodName(), strconv.Itoa(id)}...)
-	return cache.GetElse[model.Finances](key, func() (model.Finances, error) {
+	return cache.GetElse(key, func() (model.Finances, error) {
 		return getNetWorth(id)
 	})
 }
