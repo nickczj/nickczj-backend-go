@@ -23,5 +23,5 @@ func main() {
 	cache.Init()
 	initializeRoutes()
 
-	app.Run(":8888")
+	app.Run(":8080")
 }
