@@ -18,6 +18,7 @@ require (
 )
 
 require (
+	cloud.google.com/go/firestore v1.6.1
 	cloud.google.com/go/iam v0.3.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/go-playground/validator/v10 v10.11.0 // indirect
@@ -34,4 +35,5 @@ require (
 	golang.org/x/net v0.0.0-20220425223048-2871e0cb64e4 // indirect
 	golang.org/x/sys v0.0.0-20220503163025-988cb79eb6c6 // indirect
 	google.golang.org/genproto v0.0.0-20220407144326-9054f6ed7bac
+	gorm.io/driver/postgres v1.3.5
 )

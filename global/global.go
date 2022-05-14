@@ -8,6 +8,7 @@ import (
 
 var (
 	Database *gorm.DB
-	Cache    *cache.Cache
-	Client   *resty.Client
+	//Firestore *firestore.Client
+	Cache  *cache.Cache
+	Client *resty.Client
 )

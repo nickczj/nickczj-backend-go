@@ -1,2 +1,8 @@
 redis:
   host: redis-19440.c295.ap-southeast-1-1.ec2.cloud.redislabs.com:19440
+
+db:
+  host: free-tier6.gcp-asia-southeast1.cockroachlabs.cloud
+  port: 26257
+  username: nickczj
+  database: last-koala-2636.defaultdb
