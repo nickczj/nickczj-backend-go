@@ -4,7 +4,7 @@ services:
   nickczjbackendgo:
     image: nickczjbackendgo
     build:
-      context: .
-      dockerfile: ./Dockerfile
+      context: ..
+      dockerfile: ../Dockerfile
     ports:
       - 8888:8888
