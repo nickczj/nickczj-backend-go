@@ -8,5 +8,5 @@ db:
   database: last-koala-2636.defaultdb
 
 auth0:
-  issuer-url: https://dev-gx7a6qww.us.auth0.com/oauth/token
+  issuer-url: https://dev-gx7a6qww.us.auth0.com/
   audience: https://nickczj.as.r.appspot.com
