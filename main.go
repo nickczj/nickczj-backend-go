@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nickczj/web1/auth"
 	"github.com/nickczj/web1/cache"
 	"github.com/nickczj/web1/config"
 	"github.com/nickczj/web1/database"
@@ -23,6 +24,7 @@ func main() {
 
 	app = gin.Default()
 	app.Use(config.Cors())
+	app.Use(auth.Jwt())
 
 	database.Init()
 	cache.Init()

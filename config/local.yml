@@ -6,3 +6,7 @@ db:
   port: 26257
   username: nickczj
   database: last-koala-2636.defaultdb
+
+auth0:
+  issuer-url: https://dev-gx7a6qww.us.auth0.com/oauth/token
+  audience: https://nickczj.as.r.appspot.com

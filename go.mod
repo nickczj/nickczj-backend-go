@@ -18,10 +18,11 @@ require (
 )
 
 require (
-	cloud.google.com/go/firestore v1.6.1
 	cloud.google.com/go/iam v0.3.0 // indirect
+	github.com/auth0/go-jwt-middleware/v2 v2.0.1
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/go-playground/validator/v10 v10.11.0 // indirect
+	github.com/gwatts/gin-adapter v1.0.0
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/klauspost/compress v1.15.2 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
@@ -33,7 +34,6 @@ require (
 	golang.org/x/crypto v0.0.0-20220427172511-eb4f295cb31f // indirect
 	golang.org/x/exp v0.0.0-20220428152302-39d4317da171 // indirect
 	golang.org/x/net v0.0.0-20220425223048-2871e0cb64e4 // indirect
-	golang.org/x/sys v0.0.0-20220503163025-988cb79eb6c6 // indirect
 	google.golang.org/genproto v0.0.0-20220407144326-9054f6ed7bac
 	gorm.io/driver/postgres v1.3.5
 )
