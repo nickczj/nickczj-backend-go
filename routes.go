@@ -7,30 +7,22 @@ import (
 )
 
 func initializeRoutes() {
-	// Metrics
-	app.Use(stats.RequestStats())
-	app.GET("/stats", getStats)
+	app.GET("/hello", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"hi": "there"})
+	})
 
-	// Finances
 	finances := app.Group("/p/v1")
 	{
 		finances.GET("/nw/:id", GetNetWorth)
 		finances.POST("/nw", SaveNetWorth)
 	}
 
-	// Weather
-	weather := app.Group("/weather")
-	{
-		weather.GET("/now", GetWeatherNow)
-	}
+	app.GET("/weather/now", GetWeatherNow)
+	app.GET("/invisalign/current-tray", GetCurrentTray)
 
-	// Invisalign
-	invisalign := app.Group("/invisalign")
-	{
-		invisalign.GET("/current-tray", GetCurrentTray)
-	}
-
-	app.GET("/hello", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"hi": "there"})
+	// Metrics
+	app.Use(stats.RequestStats())
+	app.GET("/stats", func(c *gin.Context) {
+		c.JSON(http.StatusOK, stats.Report())
 	})
 }
