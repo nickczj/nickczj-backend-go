@@ -4,12 +4,11 @@ import (
 	"github.com/nickczj/web1/cache"
 	"github.com/nickczj/web1/global"
 	"github.com/nickczj/web1/model"
-	"github.com/nickczj/web1/utils"
 	"strconv"
 )
 
 func GetNetWorth(id int) (finances model.Finances, err error) {
-	key := cache.GenerateKey([]string{utils.GetMethodName(), strconv.Itoa(id)}...)
+	key := cache.GenerateKey([]string{cache.GetMethodName(), strconv.Itoa(id)}...)
 	return cache.GetElse(key, func() (model.Finances, error) {
 		return getNetWorth(id)
 	})
