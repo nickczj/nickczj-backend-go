@@ -13,11 +13,16 @@ func initializeRoutes() {
 
 	finances := app.Group("/p/v1")
 	{
+		// @Summary get net worth
 		finances.GET("/nw/:id", GetNetWorth)
+		// @Summary save net worth
 		finances.POST("/nw", SaveNetWorth)
 	}
 
+	// @Summary get current PSI & UV Index from data.gov.sg
 	app.GET("/weather/now", GetWeatherNow)
+
+	// @Summary get current invalign tray I'm on
 	app.GET("/invisalign/current-tray", GetCurrentTray)
 
 	// Metrics
