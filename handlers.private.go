@@ -43,3 +43,30 @@ func GetWeatherNow(c *gin.Context) {
 func GetCurrentTray(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"tray_number": service.CurrentTray()})
 }
+
+func GetFlights(c *gin.Context) {
+	if flights, err := service.Search(c, c.Query("origin"), c.Query("destination")); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to retrieve flights || " + err.Error()})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"flights": flights})
+	}
+}
+
+func GetFlightsMulti(c *gin.Context) {
+	if flights, err := service.SearchMulti(c, []string{
+		"AMS",
+		"CPH",
+		"FRA",
+		"LHR",
+		"MAN",
+		"MXP",
+		"MUC",
+		"CDG",
+		"FCO",
+		"ZRH",
+	}); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to retrieve flights || " + err.Error()})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"flights": flights})
+	}
+}

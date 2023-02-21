@@ -25,6 +25,9 @@ func initializeRoutes() {
 	// @Summary get current invalign tray I'm on
 	app.GET("/invisalign/current-tray", GetCurrentTray)
 
+	app.GET("/flights", GetFlights)
+	app.GET("/flights/multi", GetFlightsMulti)
+
 	// Metrics
 	app.Use(stats.RequestStats())
 	app.GET("/stats", func(c *gin.Context) {

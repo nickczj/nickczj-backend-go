@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"github.com/go-resty/resty/v2"
 	"github.com/nickczj/web1/global"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
@@ -15,8 +14,6 @@ type Weather struct {
 }
 
 func Now() (*Weather, error) {
-	global.Client = resty.New()
-
 	weather := &Weather{}
 
 	ctx, _ := context.WithCancel(context.Background())

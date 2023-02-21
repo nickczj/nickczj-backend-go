@@ -2,10 +2,12 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/go-resty/resty/v2"
 	"github.com/nickczj/web1/auth"
 	"github.com/nickczj/web1/cache"
 	"github.com/nickczj/web1/config"
 	"github.com/nickczj/web1/database"
+	"github.com/nickczj/web1/global"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -30,5 +32,11 @@ func main() {
 	cache.Init()
 	initializeRoutes()
 
-	app.Run(":8080")
+	global.Client = resty.New()
+
+	err := app.Run(":8080")
+	if err != nil {
+		log.Error("Error running app: ", err)
+		return
+	}
 }
