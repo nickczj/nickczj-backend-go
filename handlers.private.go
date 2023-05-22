@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"runtime/debug"
 	"strconv"
+	"strings"
 )
 
 func GetNetWorth(c *gin.Context) {
@@ -53,18 +54,7 @@ func GetFlights(c *gin.Context) {
 }
 
 func GetFlightsMulti(c *gin.Context) {
-	if flights, err := service.SearchMulti(c, []string{
-		"AMS",
-		"CPH",
-		"FRA",
-		"LHR",
-		"MAN",
-		"MXP",
-		"MUC",
-		"CDG",
-		"FCO",
-		"ZRH",
-	}); err != nil {
+	if flights, err := service.SearchMulti(c, strings.Split(c.Query("destinations"), ","), service.Business); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to retrieve flights || " + err.Error()})
 	} else {
 		c.JSON(http.StatusOK, gin.H{"flights": flights})

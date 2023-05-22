@@ -34,6 +34,8 @@ func main() {
 
 	global.Client = resty.New()
 
+	//service.Fetch()
+
 	err := app.Run(":8080")
 	if err != nil {
 		log.Error("Error running app: ", err)

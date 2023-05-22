@@ -39,9 +39,18 @@ type Advantage struct {
 	Waitlist  []string `json:"waitlist"`
 }
 
+type Class int8
+
+const (
+	Economy         Class = 0
+	Economy_Premium Class = 1
+	Business        Class = 2
+	First           Class = 3
+)
+
 const url = "https://www.singaporeair.com/redemption/getCalendarSearch.form"
 
-func SearchMulti(ctx context.Context, destinations []string) (interface{}, error) {
+func SearchMulti(ctx context.Context, destinations []string, class Class) (interface{}, error) {
 	var res []FlightSearch
 
 	for _, destination := range destinations {
@@ -177,26 +186,26 @@ func Search(ctx context.Context, origin string, destination string) (FlightSearc
 
 func flightsearch(origin string, destination string, departureDate time.Time) (string, error) {
 	result := new(interface{})
-	userAgent := "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/110.0"
+	userAgent := "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/113.0"
 
 	resp, err := global.Client.R().
 		SetResult(result).
 		SetHeaders(map[string]string{
-			"Host":                "www.singaporeair.com",
-			"User-Agent":          userAgent,
-			"Accept":              "application/json,text/plain,*/*",
-			"Accept-Language":     "en-US,en;q=0.5",
-			"Accept-Encoding":     "gzip,deflate,br",
-			"X-Sec-Clge-Req-Type": "ajax",
-			"DNT":                 "1",
-			"Sec-Fetch-Dest":      "empty",
-			"Sec-Fetch-Mode":      "cors",
-			"Sec-Fetch-Site":      "same-origin",
-			"Referer":             "https://www.singaporeair.com/redemption/loadFlightSearchPage.form",
-			"Connection":          "keep-alive",
-			"Cookie":              viper.GetString("sia.cookie"),
-			"Pragma":              "no-cache",
-			"Cache-Control":       "no-cache",
+			"Host":            "www.singaporeair.com",
+			"User-Agent":      userAgent,
+			"Accept":          "application/json,text/plain,*/*",
+			"Accept-Language": "en-US,en;q=0.5",
+			"Accept-Encoding": "gzip,deflate,br",
+			"DNT":             "1",
+			"Sec-Fetch-Dest":  "empty",
+			"Sec-Fetch-Mode":  "cors",
+			"Sec-Fetch-Site":  "same-origin",
+			"TE":              "trailers",
+			"Referer":         "https://www.singaporeair.com/redemption/loadFlightSearchPage.form",
+			"Connection":      "keep-alive",
+			"Cookie":          viper.GetString("sia.cookie"),
+			"Pragma":          "no-cache",
+			"Cache-Control":   "no-cache",
 		}).
 		SetQueryParams(map[string]string{
 			"origin":        origin,
