@@ -1,16 +1,9 @@
 package service
 
 import (
-	"log"
-
 	"github.com/playwright-community/playwright-go"
+	"log"
 )
-
-func assertErrorToNilf(message string, err error) {
-	if err != nil {
-		log.Fatalf(message, err)
-	}
-}
 
 func Fetch() {
 	pw, err := playwright.Run()
@@ -49,21 +42,12 @@ func Fetch() {
 	if _, err = page.Goto("https://www.singaporeair.com/en_UK/sg/home#/book/bookflight"); err != nil {
 		log.Fatalf("could not goto: %v", err)
 	}
-	loginbutton, err := page.Locator("text=Log-in")
-	assertErrorToNilf("could not click on login button: %v", err)
-	loginbutton.Click()
+	var options = playwright.PageLocatorOptions{}
 
-	userinput, err := page.Locator("xpath=//html/body/div[1]/div[4]/sia-header/div[1]/light-box[1]/div/div/div/sia-login/context-consumer/div/div[4]/div/input-box[1]/div/div/label/input")
-	assertErrorToNilf("could not find user input", err)
-	userinput.Type("nick.chow.zj@gmail.com")
-
-	passwordinput, err := page.Locator("xpath=//html/body/div[1]/div[4]/sia-header/div[1]/light-box[1]/div/div/div/sia-login/context-consumer/div/div[4]/div/input-box[2]/div/div/label/input")
-	assertErrorToNilf("could not find password input", err)
-	passwordinput.Type("r0landgileaD")
-
-	loginbutton, err = page.Locator("text=Log in")
-	assertErrorToNilf("could not click on login button 2: %v", err)
-	loginbutton.Click()
+	err = page.Locator("text=Log-in", options).Click()
+	if err != nil {
+		log.Fatalf("could not click on login button: %v", err)
+	}
 
 	if _, err = page.Screenshot(playwright.PageScreenshotOptions{
 		Path: playwright.String("foo.png"),
