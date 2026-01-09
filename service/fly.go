@@ -266,13 +266,18 @@ func processresult(input string) ([]Fare, error) {
 
 func sortbydate(fares []Fare) {
 	sort.Slice(fares, func(i, j int) bool {
-		i1, err := time.Parse("2006-01-02", fares[i].DepartureDate)
-		if err != nil {
-			log.Error("Error parsing departure time: ", err)
+		i1, errI := time.Parse("2006-01-02", fares[i].DepartureDate)
+		j1, errJ := time.Parse("2006-01-02", fares[j].DepartureDate)
+		// If both fail to parse, maintain original order
+		if errI != nil && errJ != nil {
+			return false
 		}
-		j1, err := time.Parse("2006-01-02", fares[j].DepartureDate)
-		if err != nil {
-			log.Error("Error parsing departure time: ", err)
+		// Push unparseable dates to the end
+		if errI != nil {
+			return false
+		}
+		if errJ != nil {
+			return true
 		}
 		return i1.Before(j1)
 	})
