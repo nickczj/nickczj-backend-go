@@ -22,7 +22,7 @@ func NewMariaDB() {
 
 func NewPostgres() {
 	handler := dbHandler(start)
-	password, err := config.AccessSecretVersion("projects/171134391294/secrets/db_password/versions/latest")
+	password, err := config.GetSecret("projects/171134391294/secrets/db_password/versions/latest")
 	if err != nil {
 		log.Error("Error getting GCP secret ", err)
 		return

@@ -21,6 +21,7 @@ func SetEnvironment() {
 	} else {
 		env = "local"
 	}
+	viper.Set("APP_ENV", env)
 	log.Info("Application environment: ", env)
 
 	viper.SetConfigName(env)

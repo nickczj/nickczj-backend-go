@@ -11,7 +11,8 @@ services:
     environment:
       - APP_ENV=prod
       - TZ=Asia/Singapore
-      - GCP_PROJECT_ID=${GCP_PROJECT_ID}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
     deploy:
       resources:
         limits:

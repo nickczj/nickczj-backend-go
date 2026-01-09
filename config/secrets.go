@@ -1,10 +1,41 @@
 package config
 
 import (
+	"os"
+	"strings"
+
 	secretmanager "cloud.google.com/go/secretmanager/apiv1"
 	"context"
+	log "github.com/sirupsen/logrus"
 	secretmanagerpb "google.golang.org/genproto/googleapis/cloud/secretmanager/v1"
 )
+
+// GetSecret retrieves a secret, first checking environment variables,
+// then falling back to GCP Secret Manager.
+// For env vars, extracts the secret name from the GCP path (e.g., "db_password" from ".../secrets/db_password/...")
+func GetSecret(name string) (*string, error) {
+	// Extract secret name from GCP path for env var lookup
+	// e.g., "projects/123/secrets/db_password/versions/latest" -> "DB_PASSWORD"
+	parts := strings.Split(name, "/")
+	var envKey string
+	for i, part := range parts {
+		if part == "secrets" && i+1 < len(parts) {
+			envKey = strings.ToUpper(parts[i+1])
+			break
+		}
+	}
+
+	// Check environment variable first
+	if envKey != "" {
+		if val := os.Getenv(envKey); val != "" {
+			log.Info("Using secret from environment: ", envKey)
+			return &val, nil
+		}
+	}
+
+	// Fall back to GCP Secret Manager
+	return AccessSecretVersion(name)
+}
 
 // AccessSecretVersion accesses the payload for the given secret version if one
 // exists. The version can be a version number as a string (e.g. "5") or an
