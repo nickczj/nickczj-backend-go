@@ -20,6 +20,10 @@ func Init() {
 			log.Error("Error getting GCP secret ", err)
 			return
 		}
+		if password == nil {
+			log.Error("Redis password is nil")
+			return
+		}
 
 		rdb := redis.NewClient(&redis.Options{
 			Addr:     viper.GetString("redis.host"),

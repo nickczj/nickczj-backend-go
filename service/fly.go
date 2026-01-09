@@ -66,20 +66,25 @@ func SearchMulti(ctx context.Context, destinations []string, class Class) (inter
 }
 
 func SearchMultiParallel(ctx context.Context, destinations []string) (interface{}, error) {
-	ctx, _ = context.WithCancel(ctx)
-	var wg = &sync.WaitGroup{}
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
 
+	var wg sync.WaitGroup
+	var mu sync.Mutex
 	var res []FlightSearch
 
 	for _, destination := range destinations {
 		wg.Add(1)
 		go func(destination string) {
+			defer wg.Done()
 			search, err := Search(ctx, "SIN", destination)
 			if err != nil {
+				log.Error("Error searching flights for ", destination, ": ", err)
 				return
 			}
+			mu.Lock()
 			res = append(res, search)
-			wg.Done()
+			mu.Unlock()
 		}(destination)
 	}
 
@@ -89,12 +94,14 @@ func SearchMultiParallel(ctx context.Context, destinations []string) (interface{
 }
 
 func Search(ctx context.Context, origin string, destination string) (FlightSearch, error) {
-	ctx, _ = context.WithCancel(ctx)
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
 
 	departureDate := time.Now()
 	weeks := []time.Time{departureDate}
 
 	var res []Fare
+	var mu sync.Mutex
 
 	w := 0
 	for w < 53 {
@@ -103,20 +110,26 @@ func Search(ctx context.Context, origin string, destination string) (FlightSearc
 		w += 1
 	}
 
-	var wg = &sync.WaitGroup{}
+	var wg sync.WaitGroup
 
 	w = 0
 	for w < 53 {
 		wg.Add(1)
 		go func(w int) {
+			defer wg.Done()
 			flights, err := flightsearch(origin, destination, weeks[w])
 			if err != nil {
 				log.Error("Error searching flights: ", err)
+				return
 			}
 
 			r, err := processresult(flights)
+			if err != nil {
+				return
+			}
+			mu.Lock()
 			res = append(res, r...)
-			wg.Done()
+			mu.Unlock()
 		}(w)
 		w += 1
 	}
@@ -253,13 +266,18 @@ func processresult(input string) ([]Fare, error) {
 
 func sortbydate(fares []Fare) {
 	sort.Slice(fares, func(i, j int) bool {
-		i1, err := time.Parse("2006-01-02", fares[i].DepartureDate)
-		if err != nil {
-			log.Error("Error parsing departure time: ", err)
+		i1, errI := time.Parse("2006-01-02", fares[i].DepartureDate)
+		j1, errJ := time.Parse("2006-01-02", fares[j].DepartureDate)
+		// If both fail to parse, maintain original order
+		if errI != nil && errJ != nil {
+			return false
 		}
-		j1, err := time.Parse("2006-01-02", fares[j].DepartureDate)
-		if err != nil {
-			log.Error("Error parsing departure time: ", err)
+		// Push unparseable dates to the end
+		if errI != nil {
+			return false
+		}
+		if errJ != nil {
+			return true
 		}
 		return i1.Before(j1)
 	})
