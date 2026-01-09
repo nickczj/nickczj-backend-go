@@ -2,7 +2,7 @@
 # Image is pulled from GitHub Container Registry
 #
 # Secrets can be provided via:
-# 1. Environment variables (DB_PASSWORD, REDIS_PASSWORD) - simplest
+# 1. Environment variables (DB_PASSWORD) - simplest
 # 2. HashiCorp Vault (set VAULT_ADDR and VAULT_TOKEN) - more secure
 
 services:
@@ -10,14 +10,16 @@ services:
     image: ghcr.io/nickczj/nickczj-backend-go:master
     container_name: nickczj-api
     restart: unless-stopped
+    depends_on:
+      - memcached
     networks:
       - traefik
+      - default
     environment:
       - APP_ENV=prod
       - TZ=Asia/Singapore
       # Option 1: Direct secrets (simple)
       - DB_PASSWORD=${DB_PASSWORD}
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
       # Option 2: Vault (comment out above, uncomment below)
       # - VAULT_ADDR=${VAULT_ADDR}
       # - VAULT_TOKEN=${VAULT_TOKEN}
@@ -33,6 +35,17 @@ services:
       - "traefik.http.routers.nickczj-api.tls=true"
       - "traefik.http.routers.nickczj-api.tls.certresolver=letsencrypt"
       - "traefik.http.services.nickczj-api.loadbalancer.server.port=8080"
+
+  memcached:
+    image: memcached:1.6-alpine
+    container_name: nickczj-memcached
+    restart: unless-stopped
+    command: memcached -m 64
+    deploy:
+      resources:
+        limits:
+          memory: 96M
+          cpus: '0.25'
 
 networks:
   traefik:

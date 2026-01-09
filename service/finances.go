@@ -1,15 +1,16 @@
 package service
 
 import (
+	"strconv"
+
 	"github.com/nickczj/web1/cache"
 	"github.com/nickczj/web1/global"
 	"github.com/nickczj/web1/model"
-	"strconv"
 )
 
-func GetNetWorth(id int) (finances model.Finances, err error) {
-	key := cache.GenerateKey([]string{cache.GetMethodName(), strconv.Itoa(id)}...)
-	return cache.GetElse(key, func() (model.Finances, error) {
+func GetNetWorth(id int) (model.Finances, error) {
+	key := cache.GenerateKey("finances", "networth", strconv.Itoa(id))
+	return cache.GetOrSet(key, func() (model.Finances, error) {
 		return getNetWorth(id)
 	})
 }
