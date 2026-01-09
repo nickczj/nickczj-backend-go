@@ -1,80 +1,30 @@
-version: '2.4'
+# NAS Deployment - copy this file and .env to your NAS
+# Image is pulled from GitHub Container Registry
 
 services:
-  nginx-proxy:
-    container_name: nginx
-    restart: always
-    image: jwilder/nginx-proxy
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - "/etc/nginx/vhost.d"
-      - "/usr/share/nginx/html"
-      - "/var/run/docker.sock:/tmp/docker.sock:ro"
-      - "/etc/nginx/certs"
-    mem_limit: 100m
-    mem_reservation: 50m
-    cpus: 0.3
+  api:
+    image: ghcr.io/nickczj/nickczj-backend-go:master
+    container_name: nickczj-api
+    restart: unless-stopped
+    networks:
+      - traefik
     environment:
+      - APP_ENV=prod
       - TZ=Asia/Singapore
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID}
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nickczj-api.rule=Host(`api.nickczj.com`)"
+      - "traefik.http.routers.nickczj-api.entrypoints=websecure"
+      - "traefik.http.routers.nickczj-api.tls=true"
+      - "traefik.http.routers.nickczj-api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.nickczj-api.loadbalancer.server.port=8080"
 
-  letsencrypt-nginx-proxy-companion:
-    container_name: letsencrypt
-    restart: always
-    image: jrcs/letsencrypt-nginx-proxy-companion
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    volumes_from:
-      - "nginx-proxy"
-    mem_limit: 75m
-    cpus: 0.1
-    environment:
-      - TZ=Asia/Singapore
-
-  web1:
-    container_name: "${APP_NAME}"
-    depends_on:
-      mariadb:
-        condition: service_healthy
-    restart: always
-    ports:
-      - "8888:8888"
-    build:
-      dockerfile: ./Dockerfile
-      context: .
-    mem_limit: 256m
-    mem_reservation: 50m
-    cpus: 0.5
-    environment:
-      - VIRTUAL_HOST=api.nickczj.com
-      - LETSENCRYPT_HOST=api.nickczj.com
-      - APP_ENV=local
-      - TZ=Asia/Singapore
-
-  mariadb:
-    container_name: "${APP_NAME}-mariadb"
-    image: "mariadb:${MARIADB_VERSION}"
-    restart: always
-    ports:
-      - "3306:3306"
-    volumes:
-      - "mariadb_data:/var/lib/mysql/data"
-      - "mariadb_logs:/var/lib/mysql/logs"
-      - /var/docker/mariadb/conf:/etc/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
-      MYSQL_DATABASE: "${MYSQL_DATABASE}"
-      MYSQL_USER: "${MYSQL_USER}"
-      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
-    healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "--user=${MYSQL_USER}", "--password=${MYSQL_PASSWORD}"]
-      interval: 3s
-      retries: 10
-    mem_limit: 128m
-    mem_reservation: 25m
-    cpus: 0.2
-
-volumes:
-  mariadb_data:
-  mariadb_logs:
+networks:
+  traefik:
+    external: true
