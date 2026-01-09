@@ -29,6 +29,12 @@ func main() {
 	}
 
 	app = gin.Default()
+
+	// Health check endpoint (before auth middleware)
+	app.GET("/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{"status": "ok"})
+	})
+
 	app.Use(config.Cors())
 	app.Use(auth.Jwt())
 
