@@ -27,6 +27,10 @@ func NewPostgres() {
 		log.Error("Error getting GCP secret ", err)
 		return
 	}
+	if password == nil {
+		log.Error("Database password is nil")
+		return
+	}
 	dsn := fmt.Sprintf("postgresql://%v:%v@%v:%v/%v?sslmode=verify-full",
 		viper.GetString("db.username"),
 		*password,

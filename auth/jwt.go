@@ -13,7 +13,11 @@ import (
 )
 
 func Jwt() gin.HandlerFunc {
-	issuerURL, _ := url.Parse(viper.GetString("auth0.issuer-url"))
+	issuerURL, err := url.Parse(viper.GetString("auth0.issuer-url"))
+	if err != nil {
+		log.Fatalf("failed to parse issuer URL: %v", err)
+		return nil
+	}
 	audience := viper.GetString("auth0.audience")
 
 	provider := jwks.NewCachingProvider(issuerURL, 5*time.Minute)

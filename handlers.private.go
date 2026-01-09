@@ -24,9 +24,12 @@ func GetNetWorth(c *gin.Context) {
 
 func SaveNetWorth(c *gin.Context) {
 	var finances model.Finances
-	_ = c.ShouldBindJSON(&finances)
+	if err := c.ShouldBindJSON(&finances); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+		return
+	}
 	if f, err := service.SaveNetWorth(finances); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "unnable to save net worth"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to save net worth"})
 	} else {
 		c.JSON(http.StatusOK, gin.H{"netWorth": f.NetWorth})
 	}
