@@ -20,6 +20,10 @@ var app *gin.Engine
 func main() {
 	config.SetEnvironment()
 
+	if err := config.InitVault(); err != nil {
+		log.Error("Failed to initialize Vault: ", err)
+	}
+
 	if !gin.IsDebugging() {
 		log.SetLevel(log.InfoLevel)
 	}

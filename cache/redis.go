@@ -15,9 +15,9 @@ import (
 
 func Init() {
 	if viper.GetString("APP_ENV") == "prod" {
-		password, err := config.GetSecret("projects/171134391294/secrets/redis_password/versions/latest")
+		password, err := config.GetSecret("secret/nickczj-api/redis_password")
 		if err != nil {
-			log.Error("Error getting GCP secret ", err)
+			log.Error("Error getting Redis secret: ", err)
 			return
 		}
 		if password == nil {

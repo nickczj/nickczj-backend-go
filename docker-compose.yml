@@ -1,5 +1,9 @@
 # NAS Deployment - copy this file and .env to your NAS
 # Image is pulled from GitHub Container Registry
+#
+# Secrets can be provided via:
+# 1. Environment variables (DB_PASSWORD, REDIS_PASSWORD) - simplest
+# 2. HashiCorp Vault (set VAULT_ADDR and VAULT_TOKEN) - more secure
 
 services:
   api:
@@ -11,8 +15,12 @@ services:
     environment:
       - APP_ENV=prod
       - TZ=Asia/Singapore
+      # Option 1: Direct secrets (simple)
       - DB_PASSWORD=${DB_PASSWORD}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
+      # Option 2: Vault (comment out above, uncomment below)
+      # - VAULT_ADDR=${VAULT_ADDR}
+      # - VAULT_TOKEN=${VAULT_TOKEN}
     deploy:
       resources:
         limits:
